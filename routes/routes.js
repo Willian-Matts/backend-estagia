@@ -11,8 +11,16 @@ var appRouter = function (app) {
 
     app.get("/alunos", (req, res) => {
         conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query('SELECT * FROM alunos_cadastrados;', function (error, results, fields) {
+            conEstagia.query('SELECT * FROM aluno;', function (error, results, fields) {
                 res.send(results);
+            });
+            conEstagia.end();
+        });
+    });
+
+    app.delete('/delete/:id', (req, res) => {
+        conEstagia.getConnection(function (error, conEstagia) {
+            conEstagia.query('DELETE FROM aluno WHERE idaluno=' + parseInt(req.params.id), function (error, results, fields) {
             });
             conEstagia.end();
         });
@@ -20,7 +28,7 @@ var appRouter = function (app) {
 
     app.get('/aluno/:id?', (req, res) => {
         conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query('SELECT * FROM alunos_cadastrados where idaluno = ' + parseInt(req.params.id), function(error, results, fields){
+            conEstagia.query('SELECT * FROM aluno where idaluno = ' + parseInt(req.params.id), function(error, results, fields){
                 res.send(results)
             });
         });
