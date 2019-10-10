@@ -25,7 +25,6 @@ var appRouter = function (app) {
                     return console.error(error.message);
                 console.log('Deleted Row(s):', results.affectedRows);
             });
-            res.sendStatus(200);
             conEstagia.release();
         });
     });
@@ -41,12 +40,16 @@ var appRouter = function (app) {
         var telefone = req.body.telefone_aluno;
         var periodo = req.body.periodo_aluno;
         var matricula = req.body.matricula_aluno;
+
+        data_nascimento = data_nascimento.split("-");
+        data_nascimento = data_nascimento.join("-");
+
+        let sql = `INSERT INTO aluno (nome_aluno, email_aluno, endereco_aluno, telefone_aluno, data_nascimento_aluno, CPF_aluno, bairro_aluno, matricula_aluno, periodo_aluno, nome_orientador_aluno, idcidade_FK) VALUES ('${nome}', '${email}', '${endereco}', '${telefone}', '${data_nascimento}', '${CPF}', '${bairro}', '${matricula}', '${periodo}', '${nome_orientador}', '1')`;
         conEstagia.getConnection(function (err, conEstagia) {
-            conEstagia.query("INSERT INTO atividade (nome_atividade, descricao_atividade, data_atividade, carga_horaria_atividade, id_estagio) VALUES ('" + nome + "', '" + descricao + "', '" + data + "', '" + cargaHoraria + "', 1)", function (err, result) {
+            conEstagia.query(sql, function (err, result) {
                 if (err) throw err;
                 console.log("1 record inserted");
             });
-            res.sendStatus(200);
             conEstagia.release();
         });
     });
@@ -63,18 +66,14 @@ var appRouter = function (app) {
         var telefone = req.body.telefone_aluno;
         var periodo = req.body.periodo_aluno;
         var matricula = req.body.matricula_aluno;
-        
+
         data_nascimento = data_nascimento.split("-");
         data_nascimento = data_nascimento.join("-");
 
-        console.log(data_nascimento);
-
-        
         let sql = `UPDATE aluno SET nome_aluno = '${nome}', email_aluno = '${email}', endereco_aluno = '${endereco}', telefone_aluno = '${telefone}', data_nascimento_aluno = '${data_nascimento}', CPF_aluno = '${CPF}', bairro_aluno = '${bairro}', matricula_aluno = '${matricula}', periodo_aluno = '${periodo}', nome_orientador_aluno = '${nome_orientador}' WHERE idaluno = ` + id;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
             });
-            res.sendStatus(200);
             conEstagia.release();
         });
 
