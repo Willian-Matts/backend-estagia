@@ -11,7 +11,7 @@ var appRouter = function (app) {
 
     app.get("/alunos", (req, res) => {
         conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query('SELECT * FROM aluno;', function (error, results, fields) {
+            conEstagia.query('SELECT * FROM aluno order by nome_aluno;', function (error, results, fields) {
                 res.send(results);
             });
             conEstagia.release();
