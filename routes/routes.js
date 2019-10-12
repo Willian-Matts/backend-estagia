@@ -18,7 +18,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.delete('/delete/:id', (req, res) => {
+    app.delete('/deleteAluno/:id', (req, res) => {
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query('DELETE FROM aluno WHERE idaluno =' + parseInt(req.params.id), (error, results, fields) => {
                 if (error)
@@ -29,7 +29,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.post('/inserir', function (req, res) {
+    app.post('/inserirAluno', function (req, res) {
         var nome = req.body.nome_aluno;
         var CPF = req.body.CPF_aluno;
         var data_nascimento = req.body.data_nascimento_aluno;
@@ -54,7 +54,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.put('/editar/:id', function (req, res) {
+    app.put('/editarAluno/:id', function (req, res) {
         var id = parseInt(req.params.id);
         var nome = req.body.nome_aluno;
         var CPF = req.body.CPF_aluno;
