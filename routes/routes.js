@@ -51,14 +51,14 @@ var appRouter = function (app) {
 
     app.put('/editarSupervisor/:id', function (req, res) {
         var id = parseInt(req.params.id);
-        var nome = req.body.nome_empresa;
-        var CNPJ = req.body.CNPJ;
-        var endereco = req.body.endereco_empresa;
-        var bairro = req.body.bairro_empresa;
-        var email = req.body.email_empresa;
-        var telefone = req.body.telefone_empresa;
+        var nome = req.body.nome_supervisor;
+        var CPF = req.body.CPF_supervisor;
+        var formacao = req.body.formacao_supervisor;
+        var data_nascimento = req.body.data_nascimento_supervisor;
+        var email = req.body.email_supervisor;
+        var telefone = req.body.telefone_supervisor;
 
-        let sql = `UPDATE empresa SET nome_empresa = '${nome}', email_empresa = '${email}', endereco_empresa = '${endereco}', telefone_empresa = '${telefone}', CNPJ = '${CNPJ}', bairro_empresa = '${bairro}' WHERE idempresa = ` + id;
+        let sql = `UPDATE supervisor SET nome_supervisor = '${nome}', email_supervisor = '${email}', telefone_supervisor = '${telefone}', CPF_supervisor = '${CPF}', formacao_supervisor = '${formacao}', data_nascimento_supervisor = '${data_nascimento}' WHERE idsupervisor = ` + id;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
             });
