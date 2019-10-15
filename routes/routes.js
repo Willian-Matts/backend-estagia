@@ -8,6 +8,17 @@ var appRouter = function (app) {
         database: 'estagia',
 
     });
+
+    app.get("/cidades", (req, res) => {
+        let sql = 'SELECT * FROM cidade;';
+        conEstagia.getConnection(function (error, conEstagia) {
+            conEstagia.query(sql, function (error, results, fields) {
+                res.send(results);
+            });
+            conEstagia.release();
+        });
+    });
+
     app.get("/estagios", (req, res) => {
         let sql = 'SELECT * FROM estagio_view order by nome_aluno;';
         conEstagia.getConnection(function (error, conEstagia) {
@@ -247,8 +258,11 @@ var appRouter = function (app) {
         var telefone = req.body.telefone_aluno;
         var periodo = req.body.periodo_aluno;
         var matricula = req.body.matricula_aluno;
+        var cidade = req.body.cidade_aluno;
 
-        let sql = `UPDATE aluno SET nome_aluno = '${nome}', email_aluno = '${email}', endereco_aluno = '${endereco}', telefone_aluno = '${telefone}', data_nascimento_aluno = '${data_nascimento}', CPF_aluno = '${CPF}', bairro_aluno = '${bairro}', matricula_aluno = '${matricula}', periodo_aluno = '${periodo}', nome_orientador_aluno = '${nome_orientador}' WHERE idaluno = ` + id;
+        console.log(cidade);
+
+        let sql = `UPDATE aluno SET nome_aluno = '${nome}', email_aluno = '${email}', endereco_aluno = '${endereco}', telefone_aluno = '${telefone}', data_nascimento_aluno = '${data_nascimento}', CPF_aluno = '${CPF}', bairro_aluno = '${bairro}', matricula_aluno = '${matricula}', periodo_aluno = '${periodo}', nome_orientador_aluno = '${nome_orientador}', idcidade_FK = '${cidade}' WHERE idaluno = ` + id;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
             });
