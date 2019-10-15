@@ -8,9 +8,68 @@ var appRouter = function (app) {
         database: 'estagia',
 
     });
+    app.get("/estagios", (req, res) => {
+        let sql = 'SELECT * FROM estagio_view order by nome_aluno;';
+        conEstagia.getConnection(function (error, conEstagia) {
+            conEstagia.query(sql, function (error, results, fields) {
+                res.send(results);
+            });
+            conEstagia.release();
+        });
+    });
+
+    app.delete('/deleteEstagio/:id', (req, res) => {
+        let sql = 'DELETE FROM estagio WHERE idsupervisor =';
+        conEstagia.getConnection(function (err, conEstagia) {
+            conEstagia.query(sql + parseInt(req.params.id), (error, results, fields) => {
+                if (error)
+                    return console.error(error.message);
+                console.log('Deleted Row(s):', results.affectedRows);
+            });
+            conEstagia.release();
+        });
+    });
+
+    app.post('/inserirEstagio', function (req, res) {
+        var nome = req.body.nome_supervisor;
+        var CPF = req.body.CPF_supervisor;
+        var formacao = req.body.formacao_supervisor;
+        var data_nascimento = req.body.data_nascimento_supervisor;
+        var email = req.body.email_supervisor;
+        var telefone = req.body.telefone_supervisor;
+
+        let sql = `INSERT INTO estagio (nome_supervisor, email_supervisor, telefone_supervisor, CPF_supervisor , formacao_supervisor, data_nascimento_supervisor, idempresa_FK) VALUES ('${nome}', '${email}', '${telefone}', '${CPF}', '${formacao}', '${data_nascimento}', '4')`;
+        conEstagia.getConnection(function (err, conEstagia) {
+            conEstagia.query(sql, function (err, result) {
+                if (err) throw err;
+                console.log("1 record inserted");
+            });
+            conEstagia.release();
+        });
+    });
+
+    app.put('/editarEstagio/:id', function (req, res) {
+        var id = parseInt(req.params.id);
+        var nome = req.body.nome_supervisor;
+        var CPF = req.body.CPF_supervisor;
+        var formacao = req.body.formacao_supervisor;
+        var data_nascimento = req.body.data_nascimento_supervisor;
+        var email = req.body.email_supervisor;
+        var telefone = req.body.telefone_supervisor;
+
+        let sql = `UPDATE estagio SET nome_supervisor = '${nome}', email_supervisor = '${email}', telefone_supervisor = '${telefone}', CPF_supervisor = '${CPF}', formacao_supervisor = '${formacao}', data_nascimento_supervisor = '${data_nascimento}' WHERE idsupervisor = ` + id;
+        conEstagia.getConnection(function (err, conEstagia) {
+            conEstagia.query(sql, function (err, result) {
+            });
+            conEstagia.release();
+        });
+
+    });
+
+    // ----------------------------------------------------------------------------------
 
     app.get("/supervisores", (req, res) => {
-        let sql = 'SELECT * FROM estagia.supervisor_view order by nome_supervisor;';
+        let sql = 'SELECT * FROM supervisor_view order by nome_supervisor;';
         conEstagia.getConnection(function (error, conEstagia) {
             conEstagia.query(sql, function (error, results, fields) {
                 res.send(results);
@@ -32,14 +91,14 @@ var appRouter = function (app) {
     });
 
     app.post('/inserirSupervisor', function (req, res) {
-        var nome = req.body.nome_empresa;
-        var CNPJ = req.body.CNPJ;
-        var endereco = req.body.endereco_empresa;
-        var bairro = req.body.bairro_empresa;
-        var email = req.body.email_empresa;
-        var telefone = req.body.telefone_empresa;
+        var nome = req.body.nome_supervisor;
+        var CPF = req.body.CPF_supervisor;
+        var formacao = req.body.formacao_supervisor;
+        var data_nascimento = req.body.data_nascimento_supervisor;
+        var email = req.body.email_supervisor;
+        var telefone = req.body.telefone_supervisor;
 
-        let sql = `INSERT INTO empresa (nome_empresa, email_empresa, endereco_empresa, telefone_empresa, CNPJ, bairro_empresa, idcidade_FK) VALUES ('${nome}', '${email}', '${endereco}', '${telefone}', '${CNPJ}', '${bairro}', '1')`;
+        let sql = `INSERT INTO supervisor (nome_supervisor, email_supervisor, telefone_supervisor, CPF_supervisor , formacao_supervisor, data_nascimento_supervisor, idempresa_FK) VALUES ('${nome}', '${email}', '${telefone}', '${CPF}', '${formacao}', '${data_nascimento}', '4')`;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
                 if (err) throw err;
@@ -130,7 +189,7 @@ var appRouter = function (app) {
     // ----------------------------------------------------------------------------------
 
     app.get("/alunos", (req, res) => {
-        let sql = 'SELECT * FROM aluno order by nome_aluno;';
+        let sql = 'SELECT * FROM aluno_view order by nome_aluno;';
         conEstagia.getConnection(function (error, conEstagia) {
             conEstagia.query(sql, function (error, results, fields) {
                 res.send(results);
