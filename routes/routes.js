@@ -32,7 +32,7 @@ var appRouter = function (app) {
     });
 
     app.delete('/deleteEstagio/:id', (req, res) => {
-        let sql = 'DELETE FROM estagio WHERE idsupervisor =';
+        let sql = 'DELETE FROM estagio WHERE idestagio =';
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql + parseInt(req.params.id), (error, results, fields) => {
                 if (error)
@@ -75,13 +75,22 @@ var appRouter = function (app) {
         var aluno = req.body.aluno_estagio;
         var empresa = req.body.empresa_estagio;
         var supervisor = req.body.supervisor_estagio;
-
+        
+        console.log (setor);
+        console.log (data_inicio);
+        console.log (data_final);
+        console.log (horas_diarias);
+        console.log (horas_semanais);
+        console.log (horas_totais);
+        console.log (aluno);
+        console.log (empresa);
+        console.log (supervisor);
         console.log(id);
-        console.log(aluno);
-        console.log(empresa);
-        console.log(supervisor);
 
-        let sql = `UPDATE estagio SET setor_estagio = '${setor}', data_inicio_estagio = '${data_inicio}', data_final_estagio = '${data_final}', horas_diarias_estagio = '${horas_diarias}', horas_semanais_estagio = '${horas_semanais}', horas_totais_estagio = '${horas_totais}', idaluno_FK = '${aluno}', idempresa_FK = '${empresa}', idsupervisor_FK = '${supervisor}'  WHERE idsupervisor = ` + id;
+        // let sql = `UPDATE aluno SET nome_aluno = '${nome}', email_aluno = '${email}', endereco_aluno = '${endereco}', telefone_aluno = '${telefone}', data_nascimento_aluno = '${data_nascimento}', CPF_aluno = '${CPF}', bairro_aluno = '${bairro}', matricula_aluno = '${matricula}', periodo_aluno = '${periodo}', nome_orientador_aluno = '${nome_orientador}', idcidade_FK = '${cidade}' WHERE idaluno = ` + id;
+
+
+        let sql = `UPDATE estagio SET setor_estagio = '${setor}', data_inicio_estagio = '${data_inicio}', data_final_estagio = '${data_final}', horas_diarias_estagio = '${horas_diarias}', horas_semanais_estagio = '${horas_semanais}', horas_totais_estagio = '${horas_totais}', idaluno_FK = '${aluno}', idempresa_FK = '${empresa}', idsupervisor_FK = '${supervisor}'  WHERE idestagio = ` + id;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
             });

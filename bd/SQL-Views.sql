@@ -1,0 +1,5 @@
+create view aluno_view as select * from aluno a inner join  cidade c where c.idcidade = a.idcidade_FK order by nome_aluno;
+create view empresa_view as select * from empresa e inner join cidade c where c.idcidade = e.idcidade_FK order by nome_empresa;
+create view supervisor_view as select * from supervisor s inner join empresa e where e.idempresa = s.idempresa_FK order by nome_supervisor;
+create view estagio_view as select idestagio, setor_estagio, data_inicio_estagio, data_final_estagio, horas_diarias_estagio, horas_semanais_estagio, horas_totais_estagio, idempresa, nome_empresa, idaluno ,nome_aluno, idsupervisor, nome_supervisor from estagio e inner join empresa m inner join aluno a inner join supervisor s where m.idempresa = e.idempresa_FK and a.idaluno = e.idaluno_FK and s.idsupervisor = e.idsupervisor_FK;
+use estagia;
