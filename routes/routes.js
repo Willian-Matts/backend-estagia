@@ -10,7 +10,7 @@ var appRouter = function (app) {
     });
 
     app.get("/cidades", (req, res) => {
-        let sql = 'SELECT * FROM cidade;';
+        let sql = 'SELECT * FROM cidade order by nome_cidade;';
         conEstagia.getConnection(function (error, conEstagia) {
             conEstagia.query(sql, function (error, results, fields) {
                 res.send(results);
@@ -18,6 +18,8 @@ var appRouter = function (app) {
             conEstagia.release();
         });
     });
+
+    // ----------------------------------------------------------------------------------
 
     app.get("/estagios", (req, res) => {
         let sql = 'SELECT * FROM estagio_view order by nome_aluno;';
@@ -42,14 +44,17 @@ var appRouter = function (app) {
     });
 
     app.post('/inserirEstagio', function (req, res) {
-        var nome = req.body.nome_supervisor;
-        var CPF = req.body.CPF_supervisor;
-        var formacao = req.body.formacao_supervisor;
-        var data_nascimento = req.body.data_nascimento_supervisor;
-        var email = req.body.email_supervisor;
-        var telefone = req.body.telefone_supervisor;
+        var setor = req.body.setor_estagio;
+        var data_inicio = req.body.data_inicio_estagio;
+        var data_final = req.body.data_final_estagio;
+        var horas_diarias = req.body.horas_diarias_estagio;
+        var horas_semanais = req.body.horas_semanais_estagio;
+        var horas_totais = req.body.horas_totais_estagio;
+        var aluno = req.body.aluno_estagio;
+        var empresa = req.body.empresa_estagio;
+        var supervisor = req.body.supervisor_estagio;
 
-        let sql = `INSERT INTO estagio (nome_supervisor, email_supervisor, telefone_supervisor, CPF_supervisor , formacao_supervisor, data_nascimento_supervisor, idempresa_FK) VALUES ('${nome}', '${email}', '${telefone}', '${CPF}', '${formacao}', '${data_nascimento}', '4')`;
+        let sql = `INSERT INTO estagio (setor_estagio, data_inicio_estagio, data_final_estagio, horas_diarias_estagio, horas_semanais_estagio, horas_totais_estagio , idaluno_FK, idempresa_FK, idsupervisor_FK) VALUES ('${setor}', '${data_inicio}', '${data_final}', '${horas_diarias}', '${horas_semanais}', '${horas_totais}', '${aluno}', '${empresa}', '${supervisor}')`;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
                 if (err) throw err;
@@ -61,14 +66,22 @@ var appRouter = function (app) {
 
     app.put('/editarEstagio/:id', function (req, res) {
         var id = parseInt(req.params.id);
-        var nome = req.body.nome_supervisor;
-        var CPF = req.body.CPF_supervisor;
-        var formacao = req.body.formacao_supervisor;
-        var data_nascimento = req.body.data_nascimento_supervisor;
-        var email = req.body.email_supervisor;
-        var telefone = req.body.telefone_supervisor;
+        var setor = req.body.setor_estagio;
+        var data_inicio = req.body.data_inicio_estagio;
+        var data_final = req.body.data_final_estagio;
+        var horas_diarias = req.body.horas_diarias_estagio;
+        var horas_semanais = req.body.horas_semanais_estagio;
+        var horas_totais = req.body.horas_totais_estagio;
+        var aluno = req.body.aluno_estagio;
+        var empresa = req.body.empresa_estagio;
+        var supervisor = req.body.supervisor_estagio;
 
-        let sql = `UPDATE estagio SET nome_supervisor = '${nome}', email_supervisor = '${email}', telefone_supervisor = '${telefone}', CPF_supervisor = '${CPF}', formacao_supervisor = '${formacao}', data_nascimento_supervisor = '${data_nascimento}' WHERE idsupervisor = ` + id;
+        console.log(id);
+        console.log(aluno);
+        console.log(empresa);
+        console.log(supervisor);
+
+        let sql = `UPDATE estagio SET setor_estagio = '${setor}', data_inicio_estagio = '${data_inicio}', data_final_estagio = '${data_final}', horas_diarias_estagio = '${horas_diarias}', horas_semanais_estagio = '${horas_semanais}', horas_totais_estagio = '${horas_totais}', idaluno_FK = '${aluno}', idempresa_FK = '${empresa}', idsupervisor_FK = '${supervisor}'  WHERE idsupervisor = ` + id;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
             });
@@ -108,8 +121,9 @@ var appRouter = function (app) {
         var data_nascimento = req.body.data_nascimento_supervisor;
         var email = req.body.email_supervisor;
         var telefone = req.body.telefone_supervisor;
+        var empresa = req.body.empresa_supervisor;
 
-        let sql = `INSERT INTO supervisor (nome_supervisor, email_supervisor, telefone_supervisor, CPF_supervisor , formacao_supervisor, data_nascimento_supervisor, idempresa_FK) VALUES ('${nome}', '${email}', '${telefone}', '${CPF}', '${formacao}', '${data_nascimento}', '4')`;
+        let sql = `INSERT INTO supervisor (nome_supervisor, email_supervisor, telefone_supervisor, CPF_supervisor , formacao_supervisor, data_nascimento_supervisor, idempresa_FK) VALUES ('${nome}', '${email}', '${telefone}', '${CPF}', '${formacao}', '${data_nascimento}', '${empresa}')`;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
                 if (err) throw err;
@@ -127,8 +141,9 @@ var appRouter = function (app) {
         var data_nascimento = req.body.data_nascimento_supervisor;
         var email = req.body.email_supervisor;
         var telefone = req.body.telefone_supervisor;
+        var empresa = req.body.empresa_supervisor;
 
-        let sql = `UPDATE supervisor SET nome_supervisor = '${nome}', email_supervisor = '${email}', telefone_supervisor = '${telefone}', CPF_supervisor = '${CPF}', formacao_supervisor = '${formacao}', data_nascimento_supervisor = '${data_nascimento}' WHERE idsupervisor = ` + id;
+        let sql = `UPDATE supervisor SET nome_supervisor = '${nome}', email_supervisor = '${email}', telefone_supervisor = '${telefone}', CPF_supervisor = '${CPF}', formacao_supervisor = '${formacao}', data_nascimento_supervisor = '${data_nascimento}', idempresa_FK = '${empresa}' WHERE idsupervisor = ` + id;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
             });
@@ -168,8 +183,9 @@ var appRouter = function (app) {
         var bairro = req.body.bairro_empresa;
         var email = req.body.email_empresa;
         var telefone = req.body.telefone_empresa;
+        var cidade = req.body.cidade_empresa;
 
-        let sql = `INSERT INTO empresa (nome_empresa, email_empresa, endereco_empresa, telefone_empresa, CNPJ, bairro_empresa, idcidade_FK) VALUES ('${nome}', '${email}', '${endereco}', '${telefone}', '${CNPJ}', '${bairro}', '1')`;
+        let sql = `INSERT INTO empresa (nome_empresa, email_empresa, endereco_empresa, telefone_empresa, CNPJ, bairro_empresa, idcidade_FK) VALUES ('${nome}', '${email}', '${endereco}', '${telefone}', '${CNPJ}', '${bairro}', '${cidade}')`;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
                 if (err) throw err;
@@ -187,8 +203,9 @@ var appRouter = function (app) {
         var bairro = req.body.bairro_empresa;
         var email = req.body.email_empresa;
         var telefone = req.body.telefone_empresa;
+        var cidade = req.body.cidade_empresa;
 
-        let sql = `UPDATE empresa SET nome_empresa = '${nome}', email_empresa = '${email}', endereco_empresa = '${endereco}', telefone_empresa = '${telefone}', CNPJ = '${CNPJ}', bairro_empresa = '${bairro}' WHERE idempresa = ` + id;
+        let sql = `UPDATE empresa SET nome_empresa = '${nome}', email_empresa = '${email}', endereco_empresa = '${endereco}', telefone_empresa = '${telefone}', CNPJ = '${CNPJ}', bairro_empresa = '${bairro}', idcidade_FK = '${cidade}' WHERE idempresa = ` + id;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
             });
@@ -232,11 +249,11 @@ var appRouter = function (app) {
         var telefone = req.body.telefone_aluno;
         var periodo = req.body.periodo_aluno;
         var matricula = req.body.matricula_aluno;
+        var cidade = req.body.cidade_aluno;
 
-        data_nascimento = data_nascimento.split("-");
-        data_nascimento = data_nascimento.join("-");
+        console.log(cidade);
 
-        let sql = `INSERT INTO aluno (nome_aluno, email_aluno, endereco_aluno, telefone_aluno, data_nascimento_aluno, CPF_aluno, bairro_aluno, matricula_aluno, periodo_aluno, nome_orientador_aluno, idcidade_FK) VALUES ('${nome}', '${email}', '${endereco}', '${telefone}', '${data_nascimento}', '${CPF}', '${bairro}', '${matricula}', '${periodo}', '${nome_orientador}', '1')`;
+        let sql = `INSERT INTO aluno (nome_aluno, email_aluno, endereco_aluno, telefone_aluno, data_nascimento_aluno, CPF_aluno, bairro_aluno, matricula_aluno, periodo_aluno, nome_orientador_aluno, idcidade_FK) VALUES ('${nome}', '${email}', '${endereco}', '${telefone}', '${data_nascimento}', '${CPF}', '${bairro}', '${matricula}', '${periodo}', '${nome_orientador}', '${cidade}')`;
         conEstagia.getConnection(function (err, conEstagia) {
             conEstagia.query(sql, function (err, result) {
                 if (err) throw err;
@@ -259,8 +276,6 @@ var appRouter = function (app) {
         var periodo = req.body.periodo_aluno;
         var matricula = req.body.matricula_aluno;
         var cidade = req.body.cidade_aluno;
-
-        console.log(cidade);
 
         let sql = `UPDATE aluno SET nome_aluno = '${nome}', email_aluno = '${email}', endereco_aluno = '${endereco}', telefone_aluno = '${telefone}', data_nascimento_aluno = '${data_nascimento}', CPF_aluno = '${CPF}', bairro_aluno = '${bairro}', matricula_aluno = '${matricula}', periodo_aluno = '${periodo}', nome_orientador_aluno = '${nome_orientador}', idcidade_FK = '${cidade}' WHERE idaluno = ` + id;
         conEstagia.getConnection(function (err, conEstagia) {
