@@ -9,6 +9,16 @@ var appRouter = function (app) {
 
     });
 
+    app.get("/login", (req, res) => {
+        let sql = 'SELECT * FROM cidade order by nome_cidade;';
+        conEstagia.getConnection(function (error, conEstagia) {
+            conEstagia.query(sql, function (error, results, fields) {
+                res.send(results);
+            });
+            conEstagia.release();
+        });
+    });
+
     app.get("/cidades", (req, res) => {
         let sql = 'SELECT * FROM cidade order by nome_cidade;';
         conEstagia.getConnection(function (error, conEstagia) {
