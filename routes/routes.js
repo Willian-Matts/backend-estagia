@@ -9,8 +9,12 @@ var appRouter = function (app) {
 
     });
 
-    app.get("/login", (req, res) => {
-        let sql = 'SELECT * FROM cidade order by nome_cidade;';
+    app.post("/funcionario", (req, res) => {
+        
+        var email = req.body.login;
+        var senha = req.body.senha;
+
+        let sql = `SELECT * FROM estagia.funcionario where email_funcionario = '${email}' and senha_funcionario = '${senha}'`;
         conEstagia.getConnection(function (error, conEstagia) {
             conEstagia.query(sql, function (error, results, fields) {
                 res.send(results);
