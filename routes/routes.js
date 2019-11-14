@@ -1,4 +1,8 @@
 const mysql = require('mysql');
+const session = require('express-session');
+const express = require('express');
+const app = express();   
+app.use(session({secret: 'estagia'}));
 
 var appRouter = function (app) {
     const conEstagia = mysql.createPool({
@@ -9,8 +13,45 @@ var appRouter = function (app) {
 
     });
 
-    app.post("/funcionario", (req, res) => {
+    app.get('/', function (req, res) {
+
+        // Check if an e-mail address is set in the session.
+        // If it is, we will redirect to the admin page.
         
+        if (req.session.email) {
+            res.send('/main/alunos');
+        }
+        else {
+            res.send('/');
+        }
+    });
+
+    app.post('/login', function (req, res) {
+
+        // Very basic. Set the session e-mail to whatever the user has added.
+        req.session.email = req.body.login;
+        req.session.password = req.body.senha;
+
+        res.end('done');
+    });
+
+    app.get('/logout',function(req,res){
+	
+        // if the user logs out, destroy all of their individual session
+        // information
+        req.session.destroy(function(err) {
+            if(err) {
+                console.log(err);
+            } else {
+                res.redirect('/');
+            }
+        });
+    });
+
+    // ----------------------------------------------------------------------------------
+
+    app.post("/funcionario", (req, res) => {
+
         var email = req.body.login;
         var senha = req.body.senha;
 
@@ -89,17 +130,6 @@ var appRouter = function (app) {
         var aluno = req.body.aluno_estagio;
         var empresa = req.body.empresa_estagio;
         var supervisor = req.body.supervisor_estagio;
-        
-        console.log (setor);
-        console.log (data_inicio);
-        console.log (data_final);
-        console.log (horas_diarias);
-        console.log (horas_semanais);
-        console.log (horas_totais);
-        console.log (aluno);
-        console.log (empresa);
-        console.log (supervisor);
-        console.log(id);
 
         // let sql = `UPDATE aluno SET nome_aluno = '${nome}', email_aluno = '${email}', endereco_aluno = '${endereco}', telefone_aluno = '${telefone}', data_nascimento_aluno = '${data_nascimento}', CPF_aluno = '${CPF}', bairro_aluno = '${bairro}', matricula_aluno = '${matricula}', periodo_aluno = '${periodo}', nome_orientador_aluno = '${nome_orientador}', idcidade_FK = '${cidade}' WHERE idaluno = ` + id;
 
