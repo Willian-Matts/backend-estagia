@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 const session = require('express-session');
 const express = require('express');
-const app = express();   
-app.use(session({secret: 'estagia'}));
+const app = express();
+app.use(session({ secret: 'estagia' }));
 
 var appRouter = function (app) {
     const conEstagia = mysql.createPool({
@@ -17,7 +17,7 @@ var appRouter = function (app) {
 
         // Check if an e-mail address is set in the session.
         // If it is, we will redirect to the admin page.
-        
+
         if (req.session.email) {
             res.send('/main/alunos');
         }
@@ -29,24 +29,40 @@ var appRouter = function (app) {
     app.post('/login', function (req, res) {
 
         // Very basic. Set the session e-mail to whatever the user has added.
-        req.session.email = req.body.login;
-        req.session.password = req.body.senha;
+        console.log("teste");
+        if (req.body.login && req.body.senha) {
+            req.session.email = req.body.login;
+            req.session.password = req.body.senha;
 
-        res.end('done');
+            setSession(true);
+            console.log("logou");
+            res.send(req.session.auth);
+        } else {
+            console.log("Sem dados");
+            setSession(false);
+            res.send(req.session.auth);
+        }
+
     });
 
-    app.get('/logout',function(req,res){
-	
+   function setSession(data = false) {
+        return session.auth = data;
+    }
+
+    app.get('/logout', function (req, res) {
+
         // if the user logs out, destroy all of their individual session
         // information
-        req.session.destroy(function(err) {
-            if(err) {
+        req.session.destroy(function (err) {
+            if (err) {
                 console.log(err);
             } else {
                 res.redirect('/');
             }
         });
     });
+
+
 
     // ----------------------------------------------------------------------------------
 
