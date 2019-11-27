@@ -62,6 +62,31 @@ var appRouter = function (app) {
 
 
     // ----------------------------------------------------------------------------------
+    app.post("/buscarEstagio", (req, res) => {
+
+        var nomeEmpresa = req.body.nome_empresa;
+        var dataInicio = req.body.data_inicio;
+        var dataFinal = req.body.data_final;
+        console.log(nomeEmpresa);
+        console.log(dataInicio);
+        console.log(dataFinal);
+
+
+        let sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
+        from estagio e inner join aluno a
+        on e.idaluno_FK = a.idaluno 
+        and e.data_inicio_estagio = '${dataInicio}'
+        and e.data_final_estagio = '${dataFinal}' 
+        inner join empresa em 
+        on e.idempresa_FK = em.idempresa
+        and em.nome_empresa = '${nomeEmpresa}'`;
+        conEstagia.getConnection(function (error, conEstagia) {
+            conEstagia.query(sql, function (error, results, fields) {
+                res.send(results);
+            });
+            conEstagia.release();
+        });
+    });
 
     app.post("/funcionario", (req, res) => {
 
