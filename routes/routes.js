@@ -71,15 +71,67 @@ var appRouter = function (app) {
         console.log(dataInicio);
         console.log(dataFinal);
 
+        if(nomeEmpresa === "" && dataInicio === ""){
+            var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
+            from estagio e inner join aluno a
+            on e.idaluno_FK = a.idaluno
+            and e.data_final_estagio like '%${dataFinal}%' 
+            inner join empresa em 
+            on e.idempresa_FK = em.idempresa`;
 
-        let sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
-        from estagio e inner join aluno a
-        on e.idaluno_FK = a.idaluno 
-        and e.data_inicio_estagio = '${dataInicio}'
-        and e.data_final_estagio = '${dataFinal}' 
-        inner join empresa em 
-        on e.idempresa_FK = em.idempresa
-        and em.nome_empresa = '${nomeEmpresa}'`;
+        }else if(nomeEmpresa === "" && dataFinal === ""){
+            var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
+            from estagio e inner join aluno a
+            on e.idaluno_FK = a.idaluno 
+            and e.data_inicio_estagio like '%${dataInicio}%' 
+            inner join empresa em 
+            on e.idempresa_FK = em.idempresa`;
+
+        }else if(dataFinal === "" && dataInicio === ""){
+            var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
+            from estagio e inner join aluno a
+            on e.idaluno_FK = a.idaluno 
+            inner join empresa em 
+            on e.idempresa_FK = em.idempresa
+            and em.nome_empresa like '%${nomeEmpresa}%'`;
+
+        }else if(nomeEmpresa === ""){
+            var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
+            from estagio e inner join aluno a
+            on e.idaluno_FK = a.idaluno 
+            and e.data_inicio_estagio like '%${dataInicio}%'
+            and e.data_final_estagio like '%${dataFinal}%' 
+            inner join empresa em 
+            on e.idempresa_FK = em.idempresa`;
+        
+        }else if(dataInicio === ""){
+            var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
+            from estagio e inner join aluno a
+            on e.idaluno_FK = a.idaluno 
+            and e.data_final_estagio like '%${dataFinal}%' 
+            inner join empresa em 
+            on e.idempresa_FK = em.idempresa
+            and em.nome_empresa like '%${nomeEmpresa}%'`;
+
+        }else if(dataFinal === ""){
+            var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
+            from estagio e inner join aluno a
+            on e.idaluno_FK = a.idaluno 
+            and e.data_inicio_estagio like '%${dataInicio}%'
+            inner join empresa em 
+            on e.idempresa_FK = em.idempresa
+            and em.nome_empresa like '%${nomeEmpresa}%'`;
+        }else{
+            var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
+            from estagio e inner join aluno a
+            on e.idaluno_FK = a.idaluno 
+            and e.data_inicio_estagio = '%${dataInicio}%'
+            and e.data_final_estagio = '%${dataFinal}%' 
+            inner join empresa em 
+            on e.idempresa_FK = em.idempresa
+            and em.nome_empresa like '%${nomeEmpresa}%'`;
+        }
+
         conEstagia.getConnection(function (error, conEstagia) {
             conEstagia.query(sql, function (error, results, fields) {
                 res.send(results);
