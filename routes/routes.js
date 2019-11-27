@@ -121,12 +121,12 @@ var appRouter = function (app) {
             inner join empresa em 
             on e.idempresa_FK = em.idempresa
             and em.nome_empresa like '%${nomeEmpresa}%'`;
-        }else{
+        }else if(nomeEmpresa !== "" && dataInicio !== "" && dataFinal !== ""){
             var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
             from estagio e inner join aluno a
             on e.idaluno_FK = a.idaluno 
-            and e.data_inicio_estagio = '%${dataInicio}%'
-            and e.data_final_estagio = '%${dataFinal}%' 
+            and e.data_inicio_estagio like '%${dataInicio}%'
+            and e.data_final_estagio like '%${dataFinal}%' 
             inner join empresa em 
             on e.idempresa_FK = em.idempresa
             and em.nome_empresa like '%${nomeEmpresa}%'`;
