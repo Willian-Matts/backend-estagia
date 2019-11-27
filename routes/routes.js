@@ -67,9 +67,6 @@ var appRouter = function (app) {
         var nomeEmpresa = req.body.nome_empresa;
         var dataInicio = req.body.data_inicio;
         var dataFinal = req.body.data_final;
-        console.log(nomeEmpresa);
-        console.log(dataInicio);
-        console.log(dataFinal);
 
         if(nomeEmpresa === "" && dataInicio === ""){
             var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio 
