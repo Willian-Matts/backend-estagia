@@ -52,6 +52,7 @@ app.get('/logout',function(req,res){
 	
 	// if the user logs out, destroy all of their individual session
 	// information
+	console.log(req.session.email)
 	req.session.destroy(function(err) {
 		if(err) {
 			console.log(err);
