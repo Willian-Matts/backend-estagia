@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 app.use(session({ secret: 'teste' }));
 
-var appRouter = function (app) {
+var appRouter = function(app) {
     const conEstagia = mysql.createPool({
         host: 'localhost',
         user: 'root',
@@ -13,20 +13,19 @@ var appRouter = function (app) {
 
     });
 
-    app.get('/', function (req, res) {
+    app.get('/', function(req, res) {
 
         // Check if an e-mail address is set in the session.
         // If it is, we will redirect to the admin page.
 
         if (req.session.email) {
             res.send('/main/alunos');
-        }
-        else {
+        } else {
             res.send('/');
         }
     });
 
-    app.post('/login', function (req, res) {
+    app.post('/login', function(req, res) {
 
         // Very basic. Set the session e-mail to whatever the user has added.
         if (req.body.login && req.body.senha) {
@@ -45,12 +44,12 @@ var appRouter = function (app) {
     });
 
 
-    app.get('/logout', function (req, res) {
+    app.get('/logout', function(req, res) {
 
         // if the user logs out, destroy all of their individual session
         // information
         console.log(req.session.login);
-        req.session.destroy(function (err) {
+        req.session.destroy(function(err) {
             if (err) {
                 console.log(err);
             } else {
@@ -67,8 +66,9 @@ var appRouter = function (app) {
         var nomeEmpresa = req.body.nome_empresa;
         var dataInicio = req.body.data_inicio;
         var dataFinal = req.body.data_final;
+        var order = req.body.ordem;
 
-        console.log(dataInicio);
+        // console.log(dataInicio);
 
         if (nomeEmpresa === "" && dataInicio === "") {
             var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio, setor_estagio, horas_semanais_estagio, horas_diarias_estagio, nome_supervisor 
@@ -78,7 +78,8 @@ var appRouter = function (app) {
             inner join empresa em 
             on e.idempresa_FK = em.idempresa
             inner join supervisor s
-            on e.idsupervisor_FK = s.idsupervisor;`;
+            on e.idsupervisor_FK = s.idsupervisor
+            order by ${order};`;
 
         } else if (nomeEmpresa === "" && dataFinal === "") {
             var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio, setor_estagio, horas_semanais_estagio, horas_diarias_estagio, nome_supervisor 
@@ -88,7 +89,8 @@ var appRouter = function (app) {
             inner join empresa em 
             on e.idempresa_FK = em.idempresa
             inner join supervisor s
-            on e.idsupervisor_FK = s.idsupervisor;`;
+            on e.idsupervisor_FK = s.idsupervisor
+            order by ${order};`;
 
         } else if (dataFinal === "" && dataInicio === "") {
             var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio, setor_estagio, horas_semanais_estagio, horas_diarias_estagio, nome_supervisor 
@@ -98,7 +100,8 @@ var appRouter = function (app) {
             on e.idempresa_FK = em.idempresa
             and em.nome_empresa like '%${nomeEmpresa}%'
             inner join supervisor s
-            on e.idsupervisor_FK = s.idsupervisor;`;
+            on e.idsupervisor_FK = s.idsupervisor
+            order by ${order};`;
 
         } else if (nomeEmpresa === "") {
             var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio, setor_estagio, horas_semanais_estagio, horas_diarias_estagio, nome_supervisor 
@@ -109,7 +112,8 @@ var appRouter = function (app) {
             inner join empresa em 
             on e.idempresa_FK = em.idempresa
             inner join supervisor s
-            on e.idsupervisor_FK = s.idsupervisor;`;
+            on e.idsupervisor_FK = s.idsupervisor
+            order by ${order};`;
 
         } else if (dataInicio === "") {
             var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio, setor_estagio, horas_semanais_estagio, horas_diarias_estagio, nome_supervisor 
@@ -120,7 +124,8 @@ var appRouter = function (app) {
             on e.idempresa_FK = em.idempresa
             and em.nome_empresa like '%${nomeEmpresa}%'
             inner join supervisor s
-            on e.idsupervisor_FK = s.idsupervisor;`;
+            on e.idsupervisor_FK = s.idsupervisor
+            order by ${order};`;
 
         } else if (dataFinal === "") {
             var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio, setor_estagio, horas_semanais_estagio, horas_diarias_estagio, nome_supervisor
@@ -131,8 +136,9 @@ var appRouter = function (app) {
             on e.idempresa_FK = em.idempresa
             and em.nome_empresa like '%${nomeEmpresa}%'
             inner join supervisor s
-            on e.idsupervisor_FK = s.idsupervisor`;
-            
+            on e.idsupervisor_FK = s.idsupervisor
+            order by ${order};`;
+
         } else if (nomeEmpresa !== "" && dataInicio !== "" && dataFinal !== "") {
             var sql = `select nome_aluno, nome_empresa, data_inicio_estagio, data_final_estagio, horas_totais_estagio, setor_estagio, horas_semanais_estagio, horas_diarias_estagio, nome_supervisor 
             from estagio e inner join aluno a
@@ -143,11 +149,12 @@ var appRouter = function (app) {
             on e.idempresa_FK = em.idempresa
             and em.nome_empresa like '%${nomeEmpresa}%'
             inner join supervisor s
-            on e.idsupervisor_FK = s.idsupervisor;`;
+            on e.idsupervisor_FK = s.idsupervisor
+            order by ${order};`;
         }
 
-        conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query(sql, function (error, results, fields) {
+        conEstagia.getConnection(function(error, conEstagia) {
+            conEstagia.query(sql, function(error, results, fields) {
                 res.send(results);
             });
             conEstagia.release();
@@ -160,8 +167,8 @@ var appRouter = function (app) {
         var senha = req.body.senha;
 
         let sql = `SELECT * FROM estagia.funcionario where email_funcionario = '${email}' and senha_funcionario = '${senha}'`;
-        conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query(sql, function (error, results, fields) {
+        conEstagia.getConnection(function(error, conEstagia) {
+            conEstagia.query(sql, function(error, results, fields) {
                 res.send(results);
             });
             conEstagia.release();
@@ -170,8 +177,8 @@ var appRouter = function (app) {
 
     app.get("/cidades", (req, res) => {
         let sql = 'SELECT * FROM cidade order by nome_cidade;';
-        conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query(sql, function (error, results, fields) {
+        conEstagia.getConnection(function(error, conEstagia) {
+            conEstagia.query(sql, function(error, results, fields) {
                 res.send(results);
             });
             conEstagia.release();
@@ -182,8 +189,8 @@ var appRouter = function (app) {
 
     app.get("/estagios", (req, res) => {
         let sql = 'SELECT * FROM estagio_view order by nome_aluno;';
-        conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query(sql, function (error, results, fields) {
+        conEstagia.getConnection(function(error, conEstagia) {
+            conEstagia.query(sql, function(error, results, fields) {
                 res.send(results);
             });
             conEstagia.release();
@@ -192,7 +199,7 @@ var appRouter = function (app) {
 
     app.delete('/deleteEstagio/:id', (req, res) => {
         let sql = 'DELETE FROM estagio WHERE idestagio =';
-        conEstagia.getConnection(function (err, conEstagia) {
+        conEstagia.getConnection(function(err, conEstagia) {
             conEstagia.query(sql + parseInt(req.params.id), (error, results, fields) => {
                 if (error)
                     return console.error(error.message);
@@ -202,7 +209,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.post('/inserirEstagio', function (req, res) {
+    app.post('/inserirEstagio', function(req, res) {
         var setor = req.body.setor_estagio;
         var data_inicio = req.body.data_inicio_estagio;
         var data_final = req.body.data_final_estagio;
@@ -214,8 +221,8 @@ var appRouter = function (app) {
         var supervisor = req.body.supervisor_estagio;
 
         let sql = `INSERT INTO estagio (setor_estagio, data_inicio_estagio, data_final_estagio, horas_diarias_estagio, horas_semanais_estagio, horas_totais_estagio , idaluno_FK, idempresa_FK, idsupervisor_FK) VALUES ('${setor}', '${data_inicio}', '${data_final}', '${horas_diarias}', '${horas_semanais}', '${horas_totais}', '${aluno}', '${empresa}', '${supervisor}')`;
-        conEstagia.getConnection(function (err, conEstagia) {
-            conEstagia.query(sql, function (err, result) {
+        conEstagia.getConnection(function(err, conEstagia) {
+            conEstagia.query(sql, function(err, result) {
                 if (err) throw err;
                 console.log("1 record inserted");
             });
@@ -223,7 +230,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.put('/editarEstagio/:id', function (req, res) {
+    app.put('/editarEstagio/:id', function(req, res) {
         var id = parseInt(req.params.id);
         var setor = req.body.setor_estagio;
         var data_inicio = req.body.data_inicio_estagio;
@@ -239,9 +246,8 @@ var appRouter = function (app) {
 
 
         let sql = `UPDATE estagio SET setor_estagio = '${setor}', data_inicio_estagio = '${data_inicio}', data_final_estagio = '${data_final}', horas_diarias_estagio = '${horas_diarias}', horas_semanais_estagio = '${horas_semanais}', horas_totais_estagio = '${horas_totais}', idaluno_FK = '${aluno}', idempresa_FK = '${empresa}', idsupervisor_FK = '${supervisor}'  WHERE idestagio = ` + id;
-        conEstagia.getConnection(function (err, conEstagia) {
-            conEstagia.query(sql, function (err, result) {
-            });
+        conEstagia.getConnection(function(err, conEstagia) {
+            conEstagia.query(sql, function(err, result) {});
             conEstagia.release();
         });
 
@@ -251,8 +257,8 @@ var appRouter = function (app) {
 
     app.get("/supervisores", (req, res) => {
         let sql = 'SELECT * FROM supervisor_view order by nome_supervisor;';
-        conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query(sql, function (error, results, fields) {
+        conEstagia.getConnection(function(error, conEstagia) {
+            conEstagia.query(sql, function(error, results, fields) {
                 res.send(results);
             });
             conEstagia.release();
@@ -261,7 +267,7 @@ var appRouter = function (app) {
 
     app.delete('/deleteSupervisor/:id', (req, res) => {
         let sql = 'DELETE FROM supervisor WHERE idsupervisor =';
-        conEstagia.getConnection(function (err, conEstagia) {
+        conEstagia.getConnection(function(err, conEstagia) {
             conEstagia.query(sql + parseInt(req.params.id), (error, results, fields) => {
                 if (error)
                     return console.error(error.message);
@@ -271,7 +277,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.post('/inserirSupervisor', function (req, res) {
+    app.post('/inserirSupervisor', function(req, res) {
         var nome = req.body.nome_supervisor;
         var CPF = req.body.CPF_supervisor;
         var formacao = req.body.formacao_supervisor;
@@ -281,8 +287,8 @@ var appRouter = function (app) {
         var empresa = req.body.empresa_supervisor;
 
         let sql = `INSERT INTO supervisor (nome_supervisor, email_supervisor, telefone_supervisor, CPF_supervisor , formacao_supervisor, data_nascimento_supervisor, idempresa_FK) VALUES ('${nome}', '${email}', '${telefone}', '${CPF}', '${formacao}', '${data_nascimento}', '${empresa}')`;
-        conEstagia.getConnection(function (err, conEstagia) {
-            conEstagia.query(sql, function (err, result) {
+        conEstagia.getConnection(function(err, conEstagia) {
+            conEstagia.query(sql, function(err, result) {
                 if (err) throw err;
                 console.log("1 record inserted");
             });
@@ -290,7 +296,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.put('/editarSupervisor/:id', function (req, res) {
+    app.put('/editarSupervisor/:id', function(req, res) {
         var id = parseInt(req.params.id);
         var nome = req.body.nome_supervisor;
         var CPF = req.body.CPF_supervisor;
@@ -301,9 +307,8 @@ var appRouter = function (app) {
         var empresa = req.body.empresa_supervisor;
 
         let sql = `UPDATE supervisor SET nome_supervisor = '${nome}', email_supervisor = '${email}', telefone_supervisor = '${telefone}', CPF_supervisor = '${CPF}', formacao_supervisor = '${formacao}', data_nascimento_supervisor = '${data_nascimento}', idempresa_FK = '${empresa}' WHERE idsupervisor = ` + id;
-        conEstagia.getConnection(function (err, conEstagia) {
-            conEstagia.query(sql, function (err, result) {
-            });
+        conEstagia.getConnection(function(err, conEstagia) {
+            conEstagia.query(sql, function(err, result) {});
             conEstagia.release();
         });
 
@@ -313,8 +318,8 @@ var appRouter = function (app) {
 
     app.get("/empresas", (req, res) => {
         let sql = 'SELECT * FROM empresa_view order by nome_empresa;';
-        conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query(sql, function (error, results, fields) {
+        conEstagia.getConnection(function(error, conEstagia) {
+            conEstagia.query(sql, function(error, results, fields) {
                 res.send(results);
             });
             conEstagia.release();
@@ -323,7 +328,7 @@ var appRouter = function (app) {
 
     app.delete('/deleteEmpresa/:id', (req, res) => {
         let sql = 'DELETE FROM empresa WHERE idempresa =';
-        conEstagia.getConnection(function (err, conEstagia) {
+        conEstagia.getConnection(function(err, conEstagia) {
             conEstagia.query(sql + parseInt(req.params.id), (error, results, fields) => {
                 if (error)
                     return console.error(error.message);
@@ -333,7 +338,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.post('/inserirEmpresa', function (req, res) {
+    app.post('/inserirEmpresa', function(req, res) {
         var nome = req.body.nome_empresa;
         var CNPJ = req.body.CNPJ;
         var endereco = req.body.endereco_empresa;
@@ -343,8 +348,8 @@ var appRouter = function (app) {
         var cidade = req.body.cidade_empresa;
 
         let sql = `INSERT INTO empresa (nome_empresa, email_empresa, endereco_empresa, telefone_empresa, CNPJ, bairro_empresa, idcidade_FK) VALUES ('${nome}', '${email}', '${endereco}', '${telefone}', '${CNPJ}', '${bairro}', '${cidade}')`;
-        conEstagia.getConnection(function (err, conEstagia) {
-            conEstagia.query(sql, function (err, result) {
+        conEstagia.getConnection(function(err, conEstagia) {
+            conEstagia.query(sql, function(err, result) {
                 if (err) throw err;
                 console.log("1 record inserted");
             });
@@ -352,7 +357,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.put('/editarEmpresa/:id', function (req, res) {
+    app.put('/editarEmpresa/:id', function(req, res) {
         var id = parseInt(req.params.id);
         var nome = req.body.nome_empresa;
         var CNPJ = req.body.CNPJ;
@@ -363,9 +368,8 @@ var appRouter = function (app) {
         var cidade = req.body.cidade_empresa;
 
         let sql = `UPDATE empresa SET nome_empresa = '${nome}', email_empresa = '${email}', endereco_empresa = '${endereco}', telefone_empresa = '${telefone}', CNPJ = '${CNPJ}', bairro_empresa = '${bairro}', idcidade_FK = '${cidade}' WHERE idempresa = ` + id;
-        conEstagia.getConnection(function (err, conEstagia) {
-            conEstagia.query(sql, function (err, result) {
-            });
+        conEstagia.getConnection(function(err, conEstagia) {
+            conEstagia.query(sql, function(err, result) {});
             conEstagia.release();
         });
 
@@ -375,8 +379,8 @@ var appRouter = function (app) {
 
     app.get("/alunos", (req, res) => {
         let sql = 'SELECT * FROM aluno_view order by nome_aluno;';
-        conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query(sql, function (error, results, fields) {
+        conEstagia.getConnection(function(error, conEstagia) {
+            conEstagia.query(sql, function(error, results, fields) {
                 res.send(results);
             });
             conEstagia.release();
@@ -385,7 +389,7 @@ var appRouter = function (app) {
 
     app.delete('/deleteAluno/:id', (req, res) => {
         let sql = 'DELETE FROM aluno WHERE idaluno =';
-        conEstagia.getConnection(function (err, conEstagia) {
+        conEstagia.getConnection(function(err, conEstagia) {
             conEstagia.query(sql + parseInt(req.params.id), (error, results, fields) => {
                 if (error)
                     return console.error(error.message);
@@ -395,7 +399,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.post('/inserirAluno', function (req, res) {
+    app.post('/inserirAluno', function(req, res) {
         var nome = req.body.nome_aluno;
         var CPF = req.body.CPF_aluno;
         var data_nascimento = req.body.data_nascimento_aluno;
@@ -411,8 +415,8 @@ var appRouter = function (app) {
         console.log(cidade);
 
         let sql = `INSERT INTO aluno (nome_aluno, email_aluno, endereco_aluno, telefone_aluno, data_nascimento_aluno, CPF_aluno, bairro_aluno, matricula_aluno, periodo_aluno, nome_orientador_aluno, idcidade_FK) VALUES ('${nome}', '${email}', '${endereco}', '${telefone}', '${data_nascimento}', '${CPF}', '${bairro}', '${matricula}', '${periodo}', '${nome_orientador}', '${cidade}')`;
-        conEstagia.getConnection(function (err, conEstagia) {
-            conEstagia.query(sql, function (err, result) {
+        conEstagia.getConnection(function(err, conEstagia) {
+            conEstagia.query(sql, function(err, result) {
                 if (err) throw err;
                 console.log("1 record inserted");
             });
@@ -420,7 +424,7 @@ var appRouter = function (app) {
         });
     });
 
-    app.put('/editarAluno/:id', function (req, res) {
+    app.put('/editarAluno/:id', function(req, res) {
         var id = parseInt(req.params.id);
         var nome = req.body.nome_aluno;
         var CPF = req.body.CPF_aluno;
@@ -435,17 +439,16 @@ var appRouter = function (app) {
         var cidade = req.body.cidade_aluno;
 
         let sql = `UPDATE aluno SET nome_aluno = '${nome}', email_aluno = '${email}', endereco_aluno = '${endereco}', telefone_aluno = '${telefone}', data_nascimento_aluno = '${data_nascimento}', CPF_aluno = '${CPF}', bairro_aluno = '${bairro}', matricula_aluno = '${matricula}', periodo_aluno = '${periodo}', nome_orientador_aluno = '${nome_orientador}', idcidade_FK = '${cidade}' WHERE idaluno = ` + id;
-        conEstagia.getConnection(function (err, conEstagia) {
-            conEstagia.query(sql, function (err, result) {
-            });
+        conEstagia.getConnection(function(err, conEstagia) {
+            conEstagia.query(sql, function(err, result) {});
             conEstagia.release();
         });
 
     });
 
     app.get('/aluno/:id?', (req, res) => {
-        conEstagia.getConnection(function (error, conEstagia) {
-            conEstagia.query('SELECT * FROM aluno where idaluno = ' + parseInt(req.params.id), function (error, results, fields) {
+        conEstagia.getConnection(function(error, conEstagia) {
+            conEstagia.query('SELECT * FROM aluno where idaluno = ' + parseInt(req.params.id), function(error, results, fields) {
                 res.send(results)
             });
         });
